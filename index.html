@@ -763,12 +763,12 @@
  </div>
  </div>
 
- <use href="#icon-mail"/>
+ <button class="btn" style="background: white; color: var(--bg-dark); border: none; cursor: pointer;" onclick="copyEmail()">
+ <svg class="icon icon-sm"><use href="#icon-mail"/></svg>
+ Send me an Email!
+ </button>
  <a href="https://app.joinknack.com/user/u_01jk6bwstd5eqcwphjqggkada2" target="_blank" class="btn" style="background: white; color: var(--bg-dark);">
- Send me an Email
- </a>
- <a href="https://app.joinknack.com/user/u_01jk6bwstd5eqcwphjqggkada2" target="_blank" class="btn" style="background: white; color: var(--bg-dark);">
- Hire me on Knack
+ Find me on Knack!(UNG)
  </a>
  </div>
  </div>
@@ -793,6 +793,16 @@
  }
  });
  });
+
+ // Copy email to clipboard
+ function copyEmail() {
+ const email = 'joshuaacklen@gmail.com';
+ navigator.clipboard.writeText(email).then(() => {
+ alert('Email copied to clipboard!');
+ }).catch(err => {
+ console.error('Failed to copy email:', err);
+ });
+ }
  </script>
 </body>
 </html>
