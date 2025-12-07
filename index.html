@@ -14,13 +14,11 @@
 
 		<title>Joshua Acklen - Portfolio</title>
 
-		<!-- Font Awesome 6 Free CDN -->
-
 		<style>
 			/* CSS Variables */
 			:root {
 				--bg-dark: #0f172a;
-				--bg-card: rgba(30, 41, 59, 0.7);
+				--bg-card: rgba(30, 41, 59, 0.85); /* Slightly more opaque for nav legibility */
 				--bg-card-border: rgba(255, 255, 255, 0.1);
 				--text-main: #f1f5f9;
 				--text-muted: #cbd5e1;
@@ -116,6 +114,9 @@
 			@media (min-width: 768px) {
 				.grid-3 { grid-template-columns: repeat(3, 1fr); }
 				.hero-title { font-size: 4.5rem !important; }
+				.hero {
+					padding-top: 4rem;
+				}
 			}
 
 			.mesh-bg {
@@ -151,12 +152,14 @@
 				justify-content: space-between;
 				align-items: center;
 				box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+				position: relative;
 			}
 
 			.logo {
 				font-weight: 700;
 				font-size: 1.25rem;
 				letter-spacing: -0.05em;
+				z-index: 102; /* Above mobile menu */
 			}
 
 			.nav-links {
@@ -176,6 +179,81 @@
 				color: var(--text-accent-blue);
 			}
 
+			/* Mobile Nav Styles */
+			.mobile-controls {
+				display: none;
+				align-items: center;
+				gap: 1rem;
+				z-index: 102;
+			}
+
+			.hamburger {
+				background: none;
+				border: none;
+				cursor: pointer;
+				padding: 0.25rem;
+				display: flex;
+				flex-direction: column;
+				gap: 5px;
+			}
+
+			.hamburger span {
+				display: block;
+				width: 24px;
+				height: 2px;
+				background-color: var(--text-main);
+				transition: 0.3s;
+			}
+
+			/* Hamburger Animation State */
+			.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+			.hamburger.active span:nth-child(2) { opacity: 0; }
+			.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+			.mobile-resume-btn {
+				font-size: 0.875rem;
+				font-weight: 600;
+				color: var(--text-accent-blue);
+				text-decoration: none;
+				border: 1px solid rgba(96, 165, 250, 0.3);
+				padding: 0.25rem 0.75rem;
+				border-radius: 999px;
+			}
+
+			@media (max-width: 768px) {
+				.nav-links {
+					position: absolute;
+					top: 100%;
+					left: 0;
+					right: 0;
+					background: var(--bg-dark); /* Solid bg for menu */
+					border: 1px solid var(--bg-card-border);
+					border-radius: 1rem;
+					margin-top: 0.5rem;
+					flex-direction: column;
+					align-items: center;
+					padding: 2rem;
+					gap: 2rem;
+					display: none; /* Hidden by default */
+					box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+				}
+
+				.nav-links.active {
+					display: flex;
+				}
+
+				.mobile-controls {
+					display: flex;
+				}
+
+				/* Hide the desktop Resume links inside the dropdown if you want to rely on the header one,
+				   or keep them. I'll hide the specific resume links in the dropdown to avoid clutter
+				   since one is already in the header */
+				.nav-links .desktop-only {
+					display: none;
+				}
+			}
+
 			/* Hero */
 			.hero {
 				min-height: 100vh;
@@ -183,7 +261,7 @@
 				align-items: center;
 				justify-content: center;
 				text-align: center;
-				padding-top: 4rem;
+				padding-top: 6rem;
 			}
 
 			.badge {
@@ -465,13 +543,25 @@
 		<nav>
 			<div class="nav-card">
 				<div class="logo"><a href="#top">JA.</a></div>
-				<div class="nav-links">
+
+				<!-- Mobile Controls (Resume + Hamburger) -->
+				<div class="mobile-controls">
+					<a href="/Joshua Acklen - Resume.pdf" class="mobile-resume-btn">Resume</a>
+					<button class="hamburger" id="hamburger" aria-label="Toggle Menu">
+						<span></span>
+						<span></span>
+						<span></span>
+					</button>
+				</div>
+
+				<div class="nav-links" id="nav-links">
 					<a href="#about">About</a>
 					<a href="#skills">Skills</a>
 					<a href="#education">Education</a>
 					<a href="#contact">Contact</a>
-					<a href="/Joshua Acklen - Resume.pdf">Resume</a>
-					<a href="/resume.html">Resume (fun)</a>
+					<!-- Hide these on mobile since we have the button in header -->
+					<a href="/Joshua Acklen - Resume.pdf" class="desktop-only">Resume</a>
+					<a href="/resume.html" class="desktop-only">Resume (fun)</a>
 				</div>
 			</div>
 		</nav>
@@ -537,7 +627,6 @@
 				</div>
 			</section>
 
-			<!-- Skills -->
 			<!-- Skills -->
 			<section id="skills" class="section">
 				<div class="container">
@@ -671,7 +760,6 @@
 			</section>
 
 			<!-- Contact -->
-			<!-- Contact -->
 			<section id="contact" class="section">
 				<div class="container">
 					<div class="glass-panel contact-box">
@@ -722,6 +810,23 @@
 							behavior: 'smooth'
 						});
 					}
+				});
+			});
+
+			// Mobile Menu Toggle
+			const hamburger = document.getElementById('hamburger');
+			const navLinks = document.getElementById('nav-links');
+
+			hamburger.addEventListener('click', () => {
+				navLinks.classList.toggle('active');
+				hamburger.classList.toggle('active');
+			});
+
+			// Close menu when clicking a link
+			document.querySelectorAll('.nav-links a').forEach(link => {
+				link.addEventListener('click', () => {
+					navLinks.classList.remove('active');
+					hamburger.classList.remove('active');
 				});
 			});
 		</script>
