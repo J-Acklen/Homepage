@@ -28,6 +28,7 @@
 
 			.cursor-blink {
 				animation: blink 1s step-end infinite;
+				box-shadow: 0 0 10px #22c55e; /* Added glow for visibility */
 			}
 
 			@keyframes blink {
@@ -131,7 +132,11 @@
 						<span class="command-text">whoami</span>
 					</div>
 					<div class="pl-4 border-l-2 border-slate-700 text-slate-300">
-						<h1 class="text-3xl md:text-4xl font-bold text-green-400 mb-2 glow" id="typewriter-name"></h1>
+						<h1 class="text-3xl md:text-4xl font-bold text-green-400 mb-2 glow flex items-center" id="name-container">
+							<span id="typewriter-name"></span>
+							<!-- Cursor inline for perfect tracking -->
+							<span class="w-3 h-8 bg-green-500 cursor-blink ml-1 inline-block align-middle" id="header-cursor"></span>
+						</h1>
 						<p class="text-lg md:text-xl text-blue-300">CS & Cybersecurity Major @ UNG (ROTC)</p>
 
 						<!-- Contact Info Section (Target for Scroll) -->
@@ -284,7 +289,7 @@
 						<span class="command-prompt">➜</span>
 						<span class="path">~</span>
 						<!-- Flashing cursor -->
-						<span class="w-2 h-5 bg-slate-400 cursor-blink group-hover:bg-green-500 transition-colors" title="Click me"></span>
+						<span class="w-3 h-5 bg-slate-400 cursor-blink group-hover:bg-green-500 transition-colors" title="Click me"></span>
 						<span class="text-slate-600 text-sm ml-2 group-hover:text-green-500/50 transition-colors duration-300 opacity-0 group-hover:opacity-100 hidden md:inline-block">_ command injection?</span>
 					</div>
 				</div>
@@ -317,7 +322,7 @@
 
 				// Small delay to simulate detection/boot and prevent visual flickering logic
 				setTimeout(() => {
-					if (isMac || document.location.href.indexOf("macOS") !== -1 ) {
+					if (isMac) {
 						// Render Mac Traffic Lights on Left
 						leftControls.innerHTML = `
                         <div class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400 transition-colors cursor-pointer" title="Close"></div>
@@ -344,6 +349,7 @@
 				// --- Resume Section Loading Logic ---
 				const nameText = "Joshua Acklen";
 				const nameElement = document.getElementById('typewriter-name');
+				const headerCursor = document.getElementById('header-cursor');
 				let i = 0;
 
 				function revealSection(id, delay) {
@@ -361,8 +367,12 @@
 					if (i < nameText.length) {
 						nameElement.innerHTML += nameText.charAt(i);
 						i++;
-						setTimeout(typeWriter, 100);
+						// Faster speed: 50ms instead of 100ms
+						setTimeout(typeWriter, 50);
 					} else {
+						// Done typing
+						headerCursor.classList.add('hidden'); // Hide the typing cursor
+
 						revealSection('section-education', 500);
 						revealSection('section-achievements', 1200);
 						revealSection('section-experience', 2000);
@@ -390,16 +400,24 @@
 
 				// Trigger modal on clicking the entire bottom prompt area
 				promptContainer.addEventListener('click', () => {
-					if(!hired) {
-						// Reset modal state
-						document.getElementById('modal-body').innerText = "Made you click! 😉";
-						document.getElementById('modal-title').innerHTML = '<span class="text-yellow-400">⚠️</span> System Message';
-						btnGroup.classList.remove('hidden');
-						// Reset order
-						if(btnGroup.firstElementChild === btnHire) {
-							btnGroup.appendChild(btnHire);
-						}
+					// ALWAYS RESET for repeatability
+					hired = false;
+
+					// Reset modal DOM state
+					document.getElementById('modal-body').innerText = "Made you click! 😉";
+					document.getElementById('modal-title').innerHTML = '<span class="text-yellow-400">⚠️</span> System Message';
+					btnGroup.classList.remove('hidden');
+
+					// Reset buttons
+					btnClose.innerText = "Close";
+					btnClose.disabled = false;
+					btnHire.disabled = false;
+
+					// Reset order to default (Close on Left)
+					if(btnGroup.firstElementChild !== btnClose) {
+						btnGroup.prepend(btnClose);
 					}
+
 					modal.classList.remove('hidden');
 				});
 
@@ -427,19 +445,26 @@
 
 				// Close modal on backdrop click
 				backdrop.addEventListener('click', closeModal);
-				// Also allow closing by clicking button
-				btnClose.addEventListener('click', closeModal);
 
-				// Cheeky Swap Logic
-				btnClose.addEventListener('mouseenter', () => {
-					// If the user tries to hover close, swap the buttons
+				// Cheeky Swap Logic (Click based for mobile support)
+				btnClose.addEventListener('click', (e) => {
+					e.stopPropagation(); // Don't close modal immediately!
+
+					// 1. Swap Buttons immediately
 					if (btnGroup.children[0] === btnClose) {
-						// If Close is first, move it to end
 						btnGroup.appendChild(btnClose);
 					} else {
-						// If Close is last, move it to start
 						btnGroup.prepend(btnClose);
 					}
+
+					// 2. Visual Feedback & "Pause"
+					btnClose.innerText = "Whoopsie...";
+					btnClose.disabled = true; // Prevent spam clicking during pause
+
+					// 3. Trigger Success after delay
+					setTimeout(() => {
+						hireJosh();
+					}, 800);
 				});
 
 				// Hire Josh Logic
@@ -533,7 +558,7 @@
 						cancelAnimationFrame(animationId);
 						ctx.clearRect(0, 0, canvas.width, canvas.height);
 						// We don't auto-close here anymore, waiting for user click
-					}, 5000);
+					}, 15000);
 				}
 
 				// Handle Resize for Canvas
