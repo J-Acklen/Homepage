@@ -16,6 +16,7 @@
 
 # Home page — self-contained, so a strict policy.
 /
+  Content-Security-Policy: script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com
   Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'sha256-dIuEdUtr3RKYD+2HeuCTqijNXfcfCI8Jzx2lDooBRHQ=' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self' https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'
 /index.html
   Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'sha256-dIuEdUtr3RKYD+2HeuCTqijNXfcfCI8Jzx2lDooBRHQ=' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src 'self' https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'
